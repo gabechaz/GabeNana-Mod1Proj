@@ -5,16 +5,16 @@
 
 # Match.destroy_all
 # Player.destroy_all
-# Machine.destroy_all
+Machine.destroy_all
 
 # nana = Player.create(name: "Nana")
 # gabe = Player.create(name: "Gabe")
 # sam = Player.create(name: "Sam")
 
-# metallica = Machine.create(name: "Metallica")
-# batman = Machine.create(name: "Batman")
-# congo = Machine.create(name: "Congo")
-# surfer = Machine.create(name: "Surfer")
+metallica = Machine.create(name: "Metallica")
+batman = Machine.create(name: "Batman")
+congo = Machine.create(name: "Congo")
+surfer = Machine.create(name: "Surfer")
 centaur = Machine.create(name: "Centaur")
 
 

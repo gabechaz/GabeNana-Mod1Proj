@@ -16,9 +16,18 @@ class Application
 
     def ask_user_for_login_or_register
         
-        prompt.select("Would you like to register or login?", cycle: true) do |menu|
+        prompt.select("Would you like to register or login?", symbols: { marker: "❍" }, cycle: true) do |menu|
+            sleep 0.2
             menu.choice "Log in", -> {login_helper}
+            sleep 0.2
             menu.choice "Register", -> {register_helper}
+        end
+    end
+
+    def return_to_main_menu
+        prompt.select("Return to Main Menu?", symbols: { marker: "❍" }, cycle: true) do |menu|
+            sleep 0.2
+        menu.choice "Main Menu", -> {main_menu}
         end
     end
 
@@ -34,11 +43,15 @@ class Application
         player.reload
         system "clear"
 
-        prompt.select("#{player.name}, this is the main menu, what would you like to do?", cycle: true) do |menu|
-            menu.choice "Start a game", -> {start_a_game}
-            menu.choice "See scores", -> {see_scores}
-            menu.choice "See all the machines I played", -> {played_with_which_machines}
+        prompt.select("#{player.name}, this is the main menu, what would you like to do?", symbols: { marker: "❍" }, cycle: true) do |menu|
+            sleep 0.2
+            # menu.choice "Start a game", -> {start_a_game}
             menu.choice "Record a score", -> {create_match}
+            sleep 0.2
+            menu.choice "See scores", -> {see_scores}
+            sleep 0.2
+            menu.choice "See all machines played", -> {played_with_which_machines}
+            sleep 0.2
             menu.choice "Quit the game", -> {quit}
         end     
     end
@@ -56,13 +69,23 @@ class Application
     end 
 
     def machine_helper
-        prompt.select("Which pinball machine did you play?") do |menu|
+        prompt.select("Which pinball machine did you play?", symbols: { marker: "❍" }, cycle: true) do |menu|
             menu.choice "Metallica", -> {puts "Ah, Metallica. A modern classic."
-            sleep 1
+            sleep 0.2
             machine_id_finder("Metallica")}
             menu.choice "Surfer", -> {puts "Surfer! An oldie but a goodie."
-            sleep 1
+            sleep 0.2
             machine_id_finder("Surfer")}
+            menu.choice "Centaur", -> {puts "She's nasty! She's tough! She's a centaur!"
+            sleep 0.2
+            machine_id_finder("Centaur")}
+            sleep 0.2
+            menu.choice "Batman", -> {puts "Dunanunanunnnaaaah"
+            machine_id_finder ("Batman")}
+            sleep 0.2
+            menu.choice "Congo", -> {puts "I love Michael Crichton!"
+            machine_id_finder ("Congo")}
+
         end
     end
 
@@ -80,42 +103,80 @@ class Application
     ############################################ READ SCORE METHODS ##################################################################
 
     def see_scores
-       prompt.select("How would you like to view your scores?", cycle: true) do |menu|
-            menu.choice "See all my scores", -> {player_all_scores}
-            menu.choice "See scores by machine", -> {score_by_machines}
-            menu.choice "See scores by player", -> {machine_scores_with_player}
-            menu.choice "See my high score by machine", -> {puts "need to work on high score by machine in the player class"}
+        system "clear"
+        prompt.select("How would you like to view your scores?", symbols: { marker: "❍" }, cycle: true) do |menu|
+            sleep 0.2
+            menu.choice "See my scores", -> {player_score_menu}
+            sleep 0.2
+            menu.choice "See a machines high scores", -> {machine_high_score_menu}
+            sleep 0.2
             menu.choice "Back to main menu", -> {main_menu}
        end
     end
 
-    def score_by_machines
-        prompt.select("which machine would you like to look at?", cycle: true) do |menu|
-            menu.choice "Batman", -> {machine_scores_finder("Batman")}
-            menu.choice "Centaur", -> {machine_scores_finder("Centaur")}
-            menu.choice "Congo", -> {machine_scores_finder("Congo")}
-            menu.choice "Metallica", -> {machine_scores_finder("Metallica")}
-            menu.choice "Surfer", -> {machine_scores_finder("Surfer")}
+    def player_score_menu
+        system "clear"
+        prompt.select("Your scores menu", symbols: { marker: "❍" }, cycle: true) do |menu|
+            sleep 0.2
+            menu.choice "See all my scores", -> {player_all_scores}
+            sleep 0.2
+            menu.choice "See my scores by machine", -> {score_by_machines_menu}
+            sleep 0.2
+            menu.choice "Back to scores menu", -> {see_scores}
         end
     end
-    
-    def machine_scores_finder(machine_name)
-       p Match.all.select {|match|match.machine.name == machine_name}.map{ |match|
-           match.score
-    }.sort
-           
-       
-        sleep 2 
+        
+
+    def machine_high_score_menu
+        system "clear"
+        prompt.select("Which machine's high scores would you like to look at?", symbols: { marker: "❍" }, cycle: true) do |menu|
+            sleep 0.2
+            menu.choice "Batman", -> {machine_high_score("Batman")}
+            sleep 0.2
+            menu.choice "Centaur", -> {machine_high_score("Centaur")}
+            sleep 0.2
+            menu.choice "Congo", -> {machine_high_score("Congo")}
+            sleep 0.2
+            menu.choice "Metallica", -> {machine_high_score("Metallica")}
+            sleep 0.2
+            menu.choice "Surfer", -> {machine_high_score("Surfer")}
+        end
     end
+
+    def machine_high_score(mach)
+        system "clear"
+        puts "These are the top three scores"
+        matches.select {|match| match.machine.name == mach}.sort_by {|match| match.score}.reverse
+            .take(3).each_with_index do |match, index| 
+         puts "#{index + 1}. #{match.player.name} || #{match.score} "
+        end
+        return_to_main_menu
+     end
+
+    def score_by_machines_menu
+        system "clear"
+        prompt.select("which machine would you like to look at?", symbols: { marker: "❍" }, cycle: true) do |menu|
+                menu.choice "Batman", -> {player.my_machine_scores_finder("Batman")}
+                menu.choice "Centaur", -> {player.my_machine_scores_finder("Centaur")}
+                menu.choice "Congo", -> {player.my_machine_scores_finder("Congo")}
+                menu.choice "Metallica", -> {player.my_machine_scores_finder("Metallica")}
+                menu.choice "Surfer", -> {player.my_machine_scores_finder("Surfer")}
+                menu.choice "Main Menu", -> {main_menu}
+        end
+        return_to_main_menu
+    end 
 
     def machine_id_finder(machine_name)
         Machine.all.select {|machine|machine.name == machine_name}.first.id
     end
     
     def player_all_scores
-        puts player.scores
-        sleep 2
-        see_scores
+        p player.scores
+        sleep 3
+        prompt.select("Back to scores menu") do |menu|
+            sleep 0.2
+            menu.choice "Return to scores menu", -> {see_scores}
+        end
     end
 
     def played_with_which_machines
@@ -130,18 +191,10 @@ class Application
         see_scores
     end
 
-    def machine_scores_with_player
-        p Hash[Match.all.map {|match| [match.name, match.score]}]
-        sleep 4
-    end
+ 
 
-    # def machine_scores
-    #     matches.map {|match| match.score}
-    # end
 
-    # def machine_high_score
-    #     scores.max_by {|score| score}
-    # end
+
 
 ########################################## DELETE AND UPDATE METHODS #####################################################################
 
@@ -152,14 +205,18 @@ class Application
         sleep 1
         puts "Or you can return to the main menu."
         sleep 1
-        prompt.select("Make your selection") do |menu| 
+        prompt.select("Make your selection", symbols: { marker: "❍" }, cycle: true) do |menu| 
+            sleep 0.2
             menu.choice "Delete your score", -> {delete_score}
+            sleep 0.2
             menu.choice "Update your score", -> {update_score}
+            sleep 0.2
             menu.choice "Save your score and return to the main menu", -> {main_menu}
         end
     end
 
     def update_score
+        system "clear"
         puts "You goofy goofball, you put in the wrong score!"
         puts "Now what was the real score, little butterfingers."
         puts "INPUT SCORE___"
@@ -179,6 +236,12 @@ class Application
 
     def self.wipe_scores
         Match.all.destroy_all
+    end
+
+
+    ############################################ HELPER METHODS #################################################################
+    def matches
+        Match.all
     end
 
 end
