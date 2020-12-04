@@ -7,3 +7,4 @@ task :console do
   #Logger.new(STDOUT)
   Pry.start
 end
+

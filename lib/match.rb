@@ -7,4 +7,5 @@ class Match < ActiveRecord::Base
         player.name
     end
 
+  
 end
