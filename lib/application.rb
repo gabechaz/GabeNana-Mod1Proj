@@ -9,14 +9,13 @@ class Application
         @prompt = TTY::Prompt.new
     end
 ################################################## LOG IN AND MENU METHODS ##################################################
-    def welcome
+    def welcome_screen
         puts "Welcome to Pinscores!"
         puts "The #1 app for recording your pinball scores"
     end
 
-    def ask_user_for_login_or_register
-        
-        prompt.select("Would you like to register or login?", symbols: { marker: "❍" }, cycle: true) do |menu|
+    def ask_player_for_login_or_register
+        prompt.select("Would you like to Login or Register?", symbols: { marker: "❍" }, cycle: true) do |menu|
             sleep 0.2
             menu.choice "Log in", -> {login_helper}
             sleep 0.2
@@ -39,13 +38,19 @@ class Application
         Player.register_a_player
     end
 
+    def record_score
+        binding.pry
+        Match.create(player_id: self.player.id, machine_id_finder("Surfer"), score: Game.last.score)
+    end
+
     def main_menu
         player.reload
         system "clear"
-
         prompt.select("#{player.name}, this is the main menu, what would you like to do?", symbols: { marker: "❍" }, cycle: true) do |menu|
             sleep 0.2
-            # menu.choice "Start a game", -> {start_a_game}
+            menu.choice "Start a game", -> {Game.start_game
+        record_score
+        main_menu}
             menu.choice "Record a score", -> {create_match}
             sleep 0.2
             menu.choice "See scores", -> {see_scores}
@@ -173,16 +178,19 @@ class Application
     def player_all_scores
         p player.scores
         sleep 3
-        prompt.select("Back to scores menu") do |menu|
+        prompt.select("Back to Scores Menu?") do |menu|
             sleep 0.2
-            menu.choice "Return to scores menu", -> {see_scores}
+            menu.choice "Return to Scores Menu", -> {see_scores}
         end
     end
 
     def played_with_which_machines
         puts player.machines_played_names.uniq
         sleep 2
-        main_menu
+        prompt.select("Back to Main Menu?") do |menu|
+            sleep 0.2
+            menu.choice "Return to Main Menu", -> {main_menu}
+        end
     end
 
     def scores_by_machine(machine_name)

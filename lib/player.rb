@@ -35,7 +35,7 @@ class Player < ActiveRecord::Base
         player = Player.find_by(name: name)
         if player.nil?
             puts "Sorry, nobody with that name exists!"
-            sleep 2
+            sleep 1
             puts "Did you spell it right? Why not try again?"
             sleep 1
             puts "Otherwise you may have to register your name..."
@@ -60,9 +60,8 @@ class Player < ActiveRecord::Base
     end
 
     def my_machine_scores_finder(machine_name)
-        matches.select {|match|match.machine.name == machine_name}.map{ |match|
-            match.score
-     }.sort.reverse.each_with_index{|score, index| puts "#{index + 1}. #{score}"}
+        matches.select {|match|match.machine.name == machine_name}.map{
+        |match| match.score}.sort.reverse.each_with_index{|score, index| puts "#{index + 1}. #{score}"}
      p "Nice scores!"
      end
 

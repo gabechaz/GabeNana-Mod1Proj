@@ -10,12 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_03_141825) do
+ActiveRecord::Schema.define(version: 2020_12_07_162341) do
+
+  create_table "games", force: :cascade do |t|
+    t.integer "score"
+  end
 
   create_table "machines", force: :cascade do |t|
     t.string "name"
-    t.string "location"
-    t.string "designer"
   end
 
   create_table "matches", force: :cascade do |t|
