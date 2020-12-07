@@ -92,12 +92,11 @@ class Game < ActiveRecord::Base
 ################################################TURN HELPER METHODS##################################################################
 
     def game_over
+        self.save
         puts "Nice Game!"
         puts "Your total score is #{self.score}!"
         puts "Maybe you'll get a high score!"
-        binding.pry
-        self.save
-        binding.pry
+        sleep 3
     end
 
     def add_score(arg)
@@ -291,9 +290,9 @@ class Game < ActiveRecord::Base
         spinner_anime
         sleep 0.5
         if @@r_drop == "lit" && @@l_drop == "lit"
-           add_score(10*self.speed/10)
+           add_score(10*@@speed/10)
         else
-            add_score(1*self.speed/10)
+            add_score(1*@@speed/10)
         end
         puts "Nice rip!"
         sleep 1
@@ -306,7 +305,7 @@ class Game < ActiveRecord::Base
     end
 
     def catch_attempt
-        outc = rand (100) + speed
+        outc = rand (100) + @@speed
         if outc > 100
             check_drain
         end

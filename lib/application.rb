@@ -10,11 +10,13 @@ class Application
     end
 ################################################## LOG IN AND MENU METHODS ##################################################
     def welcome_screen
+        system "clear"
         puts "Welcome to Pinscores!"
         puts "The #1 app for recording your pinball scores"
     end
 
     def ask_player_for_login_or_register
+        system "clear"
         prompt.select("Would you like to Login or Register?", symbols: { marker: "❍" }, cycle: true) do |menu|
             sleep 0.2
             menu.choice "Log in", -> {login_helper}
@@ -40,7 +42,7 @@ class Application
 
     def record_score
         binding.pry
-        Match.create(player_id: self.player.id, machine_id_finder("Surfer"), score: Game.last.score)
+        Match.create(player_id: self.player.id,machine_id: machine_id_finder("Surfer"), score: Game.last.score)
     end
 
     def main_menu
